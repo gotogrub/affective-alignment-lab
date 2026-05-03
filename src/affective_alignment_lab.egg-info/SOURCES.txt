@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+src/affective_alignment_lab.egg-info/PKG-INFO
+src/affective_alignment_lab.egg-info/SOURCES.txt
+src/affective_alignment_lab.egg-info/dependency_links.txt
+src/affective_alignment_lab.egg-info/top_level.txt
+src/affective_lab/__init__.py
+src/affective_lab/ekman.py

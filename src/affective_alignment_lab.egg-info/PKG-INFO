@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: affective-alignment-lab
+Version: 0.1.0
+Summary: Emotion-vector and affective alignment experiments for language models
+Requires-Python: >=3.10
+License-File: LICENSE
+Dynamic: license-file
