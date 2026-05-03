@@ -1,2 +1,3 @@
-# affective-alignment-lab
-Just my lab for some dataset tests and other
+# Affective Alignment Lab
+
+Repository for science research about ML & Data Science.
