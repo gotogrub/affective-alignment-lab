@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import inspect
 import sys
 from pathlib import Path
 from typing import Any
@@ -93,14 +94,20 @@ def main() -> None:
     except TypeError:
         training_args = Seq2SeqTrainingArguments(eval_strategy="steps", **training_kwargs)
 
-    trainer = Seq2SeqTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized_train,
-        eval_dataset=tokenized_valid,
-        tokenizer=tokenizer,
-        data_collator=DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model),
-    )
+    trainer_kwargs = {
+        "model": model,
+        "args": training_args,
+        "train_dataset": tokenized_train,
+        "eval_dataset": tokenized_valid,
+        "data_collator": DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model),
+    }
+    trainer_params = inspect.signature(Seq2SeqTrainer.__init__).parameters
+    if "processing_class" in trainer_params:
+        trainer_kwargs["processing_class"] = tokenizer
+    elif "tokenizer" in trainer_params:
+        trainer_kwargs["tokenizer"] = tokenizer
+    trainer = Seq2SeqTrainer(**trainer_kwargs)
+
     trainer.train()
     trainer.save_model(training_config["output_dir"])
     tokenizer.save_pretrained(training_config["output_dir"])

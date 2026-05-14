@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import inspect
 import sys
 from pathlib import Path
 from typing import Any
@@ -89,7 +90,19 @@ def main() -> None:
         training_args = TrainingArguments(evaluation_strategy="steps", **training_kwargs)
     except TypeError:
         training_args = TrainingArguments(eval_strategy="steps", **training_kwargs)
-    trainer = Trainer(model=model, args=training_args, train_dataset=train_dataset, eval_dataset=valid_dataset, tokenizer=tokenizer)
+    trainer_kwargs = {
+        "model": model,
+        "args": training_args,
+        "train_dataset": train_dataset,
+        "eval_dataset": valid_dataset,
+    }
+    trainer_params = inspect.signature(Trainer.__init__).parameters
+    if "processing_class" in trainer_params:
+        trainer_kwargs["processing_class"] = tokenizer
+    elif "tokenizer" in trainer_params:
+        trainer_kwargs["tokenizer"] = tokenizer
+    trainer = Trainer(**trainer_kwargs)
+
     trainer.train()
     trainer.save_model(training_config["output_dir"])
     tokenizer.save_pretrained(training_config["output_dir"])
