@@ -36,6 +36,23 @@ def text_for_record(record: dict[str, Any]) -> str:
     return record["input"]["user_query"] + "\n" + " | ".join(titles)
 
 
+def build_training_arguments(args_cls: Any, training_kwargs: dict[str, Any], *, eval_strategy: str) -> Any:
+    params = inspect.signature(args_cls.__init__).parameters
+    accepts_kwargs = any(param.kind == inspect.Parameter.VAR_KEYWORD for param in params.values())
+    filtered = dict(training_kwargs) if accepts_kwargs else {key: value for key, value in training_kwargs.items() if key in params}
+
+    if "evaluation_strategy" in params or accepts_kwargs:
+        filtered["evaluation_strategy"] = eval_strategy
+    elif "eval_strategy" in params:
+        filtered["eval_strategy"] = eval_strategy
+
+    dropped = sorted(set(training_kwargs) - set(filtered))
+    if dropped:
+        print(f"Skipping unsupported TrainingArguments keys for this transformers version: {dropped}")
+
+    return args_cls(**filtered)
+
+
 def main() -> None:
     args = parse_args()
     config = load_yaml(args.config)
@@ -86,10 +103,7 @@ def main() -> None:
         "logging_steps": training_config.get("logging_steps", 50),
         "report_to": training_config.get("report_to", "none"),
     }
-    try:
-        training_args = TrainingArguments(evaluation_strategy="steps", **training_kwargs)
-    except TypeError:
-        training_args = TrainingArguments(eval_strategy="steps", **training_kwargs)
+    training_args = build_training_arguments(TrainingArguments, training_kwargs, eval_strategy="steps")
     trainer_kwargs = {
         "model": model,
         "args": training_args,

@@ -56,6 +56,23 @@ def supports_bf16(torch: Any) -> bool:
     )
 
 
+def build_training_arguments(args_cls: Any, training_kwargs: dict[str, Any], *, eval_strategy: str) -> Any:
+    params = inspect.signature(args_cls.__init__).parameters
+    accepts_kwargs = any(param.kind == inspect.Parameter.VAR_KEYWORD for param in params.values())
+    filtered = dict(training_kwargs) if accepts_kwargs else {key: value for key, value in training_kwargs.items() if key in params}
+
+    if "evaluation_strategy" in params or accepts_kwargs:
+        filtered["evaluation_strategy"] = eval_strategy
+    elif "eval_strategy" in params:
+        filtered["eval_strategy"] = eval_strategy
+
+    dropped = sorted(set(training_kwargs) - set(filtered))
+    if dropped:
+        print(f"Skipping unsupported TrainingArguments keys for this transformers version: {dropped}")
+
+    return args_cls(**filtered)
+
+
 def main() -> None:
     args = parse_args()
     config = load_yaml(args.config)
@@ -64,7 +81,6 @@ def main() -> None:
         from datasets import Dataset
         import torch
         from transformers import (
-            AutoConfig,
             AutoModelForSeq2SeqLM,
             AutoTokenizer,
             DataCollatorForSeq2Seq,
@@ -80,10 +96,7 @@ def main() -> None:
     template = config.get("prompt_template", "instruction")
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model_config = AutoConfig.from_pretrained(model_name)
-    if hasattr(model_config, "tie_word_embeddings"):
-        model_config.tie_word_embeddings = False
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name, config=model_config)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
     train_records = [to_seq2seq_record(record, template=template) for record in read_jsonl(data_config["train_path"])]
     valid_records = [to_seq2seq_record(record, template=template) for record in read_jsonl(data_config["valid_path"])]
@@ -166,10 +179,7 @@ def main() -> None:
         "logging_nan_inf_filter": training_config.get("logging_nan_inf_filter", False),
         "report_to": training_config.get("report_to", "none"),
     }
-    try:
-        training_args = Seq2SeqTrainingArguments(evaluation_strategy="steps", **training_kwargs)
-    except TypeError:
-        training_args = Seq2SeqTrainingArguments(eval_strategy="steps", **training_kwargs)
+    training_args = build_training_arguments(Seq2SeqTrainingArguments, training_kwargs, eval_strategy="steps")
 
     trainer_kwargs = {
         "model": model,
