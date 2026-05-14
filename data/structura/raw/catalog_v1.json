@@ -1,0 +1,1290 @@
+{
+  "catalog_version": "structura_synthetic_v1",
+  "seed": 42,
+  "products": [
+    {
+      "id": "p0001",
+      "type": "product",
+      "title": "Acer Ноутбук 1",
+      "category": "laptop",
+      "price": 41400,
+      "brand": "Acer",
+      "features": [
+        "gaming",
+        "lightweight"
+      ],
+      "use_cases": [
+        "coding",
+        "gaming"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 6,
+      "ram_gb": 8,
+      "storage_gb": 1024,
+      "gpu": "integrated"
+    },
+    {
+      "id": "p0002",
+      "type": "product",
+      "title": "Lenovo Ноутбук 2",
+      "category": "laptop",
+      "price": 49900,
+      "brand": "Lenovo",
+      "features": [
+        "gaming",
+        "lightweight",
+        "office"
+      ],
+      "use_cases": [
+        "gaming",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 5,
+      "ram_gb": 8,
+      "storage_gb": 1024,
+      "gpu": "RTX 3050"
+    },
+    {
+      "id": "p0003",
+      "type": "product",
+      "title": "ASUS Ноутбук 3",
+      "category": "laptop",
+      "price": 59900,
+      "brand": "ASUS",
+      "features": [
+        "lightweight",
+        "office"
+      ],
+      "use_cases": [
+        "office",
+        "study"
+      ],
+      "stock": "limited",
+      "delivery_days": 7,
+      "ram_gb": 8,
+      "storage_gb": 256,
+      "gpu": "RTX 4070"
+    },
+    {
+      "id": "p0004",
+      "type": "product",
+      "title": "HP Ноутбук 4",
+      "category": "laptop",
+      "price": 66400,
+      "brand": "HP",
+      "features": [
+        "coding",
+        "gaming",
+        "lightweight"
+      ],
+      "use_cases": [
+        "office",
+        "study"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 4,
+      "ram_gb": 8,
+      "storage_gb": 512,
+      "gpu": "RTX 4060"
+    },
+    {
+      "id": "p0005",
+      "type": "product",
+      "title": "MSI Ноутбук 5",
+      "category": "laptop",
+      "price": 76400,
+      "brand": "MSI",
+      "features": [
+        "coding",
+        "lightweight"
+      ],
+      "use_cases": [
+        "coding",
+        "gaming"
+      ],
+      "stock": "preorder",
+      "delivery_days": 1,
+      "ram_gb": 32,
+      "storage_gb": 256,
+      "gpu": "RTX 4060"
+    },
+    {
+      "id": "p0006",
+      "type": "product",
+      "title": "Apple Ноутбук 6",
+      "category": "laptop",
+      "price": 83300,
+      "brand": "Apple",
+      "features": [
+        "coding",
+        "lightweight",
+        "office"
+      ],
+      "use_cases": [
+        "coding",
+        "study"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 6,
+      "ram_gb": 16,
+      "storage_gb": 512,
+      "gpu": "integrated"
+    },
+    {
+      "id": "p0007",
+      "type": "product",
+      "title": "Acer Ноутбук 7",
+      "category": "laptop",
+      "price": 93400,
+      "brand": "Acer",
+      "features": [
+        "gaming",
+        "study"
+      ],
+      "use_cases": [
+        "office",
+        "study"
+      ],
+      "stock": "preorder",
+      "delivery_days": 7,
+      "ram_gb": 24,
+      "storage_gb": 256,
+      "gpu": "RTX 4060"
+    },
+    {
+      "id": "p0008",
+      "type": "product",
+      "title": "Lenovo Ноутбук 8",
+      "category": "laptop",
+      "price": 103800,
+      "brand": "Lenovo",
+      "features": [
+        "coding",
+        "lightweight",
+        "study"
+      ],
+      "use_cases": [
+        "coding",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 6,
+      "ram_gb": 8,
+      "storage_gb": 1024,
+      "gpu": "RTX 3050"
+    },
+    {
+      "id": "p0009",
+      "type": "product",
+      "title": "Samsung Смартфон 1",
+      "category": "smartphone",
+      "price": 15600,
+      "brand": "Samsung",
+      "features": [
+        "battery_life",
+        "good_camera"
+      ],
+      "use_cases": [
+        "everyday",
+        "travel"
+      ],
+      "stock": "preorder",
+      "delivery_days": 6,
+      "memory_gb": 512,
+      "camera": "good",
+      "battery_mah": 5000
+    },
+    {
+      "id": "p0010",
+      "type": "product",
+      "title": "Xiaomi Смартфон 2",
+      "category": "smartphone",
+      "price": 22100,
+      "brand": "Xiaomi",
+      "features": [
+        "fast_charging",
+        "good_camera",
+        "nfc"
+      ],
+      "use_cases": [
+        "photo",
+        "travel"
+      ],
+      "stock": "limited",
+      "delivery_days": 1,
+      "memory_gb": 128,
+      "camera": "good",
+      "battery_mah": 5500
+    },
+    {
+      "id": "p0011",
+      "type": "product",
+      "title": "Apple Смартфон 3",
+      "category": "smartphone",
+      "price": 30100,
+      "brand": "Apple",
+      "features": [
+        "battery_life",
+        "fast_charging"
+      ],
+      "use_cases": [
+        "everyday",
+        "travel"
+      ],
+      "stock": "preorder",
+      "delivery_days": 4,
+      "memory_gb": 128,
+      "camera": "medium",
+      "battery_mah": 5000
+    },
+    {
+      "id": "p0012",
+      "type": "product",
+      "title": "Realme Смартфон 4",
+      "category": "smartphone",
+      "price": 36200,
+      "brand": "Realme",
+      "features": [
+        "battery_life",
+        "fast_charging",
+        "nfc"
+      ],
+      "use_cases": [
+        "everyday",
+        "travel"
+      ],
+      "stock": "preorder",
+      "delivery_days": 4,
+      "memory_gb": 256,
+      "camera": "basic",
+      "battery_mah": 5000
+    },
+    {
+      "id": "p0013",
+      "type": "product",
+      "title": "Honor Смартфон 5",
+      "category": "smartphone",
+      "price": 39100,
+      "brand": "Honor",
+      "features": [
+        "good_camera",
+        "nfc"
+      ],
+      "use_cases": [
+        "everyday",
+        "photo"
+      ],
+      "stock": "preorder",
+      "delivery_days": 2,
+      "memory_gb": 512,
+      "camera": "good",
+      "battery_mah": 6000
+    },
+    {
+      "id": "p0014",
+      "type": "product",
+      "title": "Samsung Смартфон 6",
+      "category": "smartphone",
+      "price": 46700,
+      "brand": "Samsung",
+      "features": [
+        "battery_life",
+        "fast_charging",
+        "good_camera"
+      ],
+      "use_cases": [
+        "everyday",
+        "travel"
+      ],
+      "stock": "limited",
+      "delivery_days": 5,
+      "memory_gb": 128,
+      "camera": "good",
+      "battery_mah": 4500
+    },
+    {
+      "id": "p0015",
+      "type": "product",
+      "title": "Xiaomi Смартфон 7",
+      "category": "smartphone",
+      "price": 51700,
+      "brand": "Xiaomi",
+      "features": [
+        "fast_charging",
+        "nfc"
+      ],
+      "use_cases": [
+        "photo",
+        "travel"
+      ],
+      "stock": "limited",
+      "delivery_days": 2,
+      "memory_gb": 256,
+      "camera": "basic",
+      "battery_mah": 5500
+    },
+    {
+      "id": "p0016",
+      "type": "product",
+      "title": "Apple Смартфон 8",
+      "category": "smartphone",
+      "price": 59900,
+      "brand": "Apple",
+      "features": [
+        "battery_life",
+        "fast_charging",
+        "good_camera"
+      ],
+      "use_cases": [
+        "everyday",
+        "travel"
+      ],
+      "stock": "preorder",
+      "delivery_days": 5,
+      "memory_gb": 512,
+      "camera": "good",
+      "battery_mah": 5000
+    },
+    {
+      "id": "p0017",
+      "type": "product",
+      "title": "LG Монитор 1",
+      "category": "monitor",
+      "price": 15400,
+      "brand": "LG",
+      "features": [
+        "high_refresh_rate",
+        "usb_c"
+      ],
+      "use_cases": [
+        "design",
+        "gaming"
+      ],
+      "stock": "preorder",
+      "delivery_days": 1,
+      "diagonal_in": 32,
+      "refresh_hz": 144
+    },
+    {
+      "id": "p0018",
+      "type": "product",
+      "title": "Samsung Монитор 2",
+      "category": "monitor",
+      "price": 17000,
+      "brand": "Samsung",
+      "features": [
+        "color_accuracy",
+        "eye_care",
+        "usb_c"
+      ],
+      "use_cases": [
+        "design",
+        "gaming"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 2,
+      "diagonal_in": 32,
+      "refresh_hz": 60
+    },
+    {
+      "id": "p0019",
+      "type": "product",
+      "title": "Dell Монитор 3",
+      "category": "monitor",
+      "price": 23600,
+      "brand": "Dell",
+      "features": [
+        "color_accuracy",
+        "eye_care"
+      ],
+      "use_cases": [
+        "coding",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 7,
+      "diagonal_in": 24,
+      "refresh_hz": 75
+    },
+    {
+      "id": "p0020",
+      "type": "product",
+      "title": "AOC Монитор 4",
+      "category": "monitor",
+      "price": 28600,
+      "brand": "AOC",
+      "features": [
+        "color_accuracy",
+        "eye_care",
+        "usb_c"
+      ],
+      "use_cases": [
+        "coding",
+        "gaming"
+      ],
+      "stock": "preorder",
+      "delivery_days": 4,
+      "diagonal_in": 24,
+      "refresh_hz": 75
+    },
+    {
+      "id": "p0021",
+      "type": "product",
+      "title": "BenQ Монитор 5",
+      "category": "monitor",
+      "price": 33200,
+      "brand": "BenQ",
+      "features": [
+        "eye_care",
+        "high_refresh_rate"
+      ],
+      "use_cases": [
+        "design",
+        "gaming"
+      ],
+      "stock": "preorder",
+      "delivery_days": 4,
+      "diagonal_in": 24,
+      "refresh_hz": 75
+    },
+    {
+      "id": "p0022",
+      "type": "product",
+      "title": "LG Монитор 6",
+      "category": "monitor",
+      "price": 36300,
+      "brand": "LG",
+      "features": [
+        "color_accuracy",
+        "high_refresh_rate",
+        "usb_c"
+      ],
+      "use_cases": [
+        "gaming",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 5,
+      "diagonal_in": 24,
+      "refresh_hz": 60
+    },
+    {
+      "id": "p0023",
+      "type": "product",
+      "title": "Samsung Монитор 7",
+      "category": "monitor",
+      "price": 38800,
+      "brand": "Samsung",
+      "features": [
+        "color_accuracy",
+        "eye_care"
+      ],
+      "use_cases": [
+        "coding",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 7,
+      "diagonal_in": 27,
+      "refresh_hz": 60
+    },
+    {
+      "id": "p0024",
+      "type": "product",
+      "title": "Dell Монитор 8",
+      "category": "monitor",
+      "price": 43500,
+      "brand": "Dell",
+      "features": [
+        "eye_care",
+        "high_refresh_rate",
+        "usb_c"
+      ],
+      "use_cases": [
+        "design",
+        "gaming"
+      ],
+      "stock": "preorder",
+      "delivery_days": 5,
+      "diagonal_in": 32,
+      "refresh_hz": 165
+    },
+    {
+      "id": "p0025",
+      "type": "product",
+      "title": "HP Принтер 1",
+      "category": "printer",
+      "price": 7900,
+      "brand": "HP",
+      "features": [
+        "scanner",
+        "wifi"
+      ],
+      "use_cases": [
+        "home",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 6
+    },
+    {
+      "id": "p0026",
+      "type": "product",
+      "title": "Canon Принтер 2",
+      "category": "printer",
+      "price": 14500,
+      "brand": "Canon",
+      "features": [
+        "low_cost_printing",
+        "scanner",
+        "wifi"
+      ],
+      "use_cases": [
+        "documents",
+        "home"
+      ],
+      "stock": "preorder",
+      "delivery_days": 1
+    },
+    {
+      "id": "p0027",
+      "type": "product",
+      "title": "Brother Принтер 3",
+      "category": "printer",
+      "price": 17800,
+      "brand": "Brother",
+      "features": [
+        "duplex_print",
+        "scanner"
+      ],
+      "use_cases": [
+        "documents",
+        "home"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 2
+    },
+    {
+      "id": "p0028",
+      "type": "product",
+      "title": "Epson Принтер 4",
+      "category": "printer",
+      "price": 18800,
+      "brand": "Epson",
+      "features": [
+        "duplex_print",
+        "scanner",
+        "wifi"
+      ],
+      "use_cases": [
+        "home",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 4
+    },
+    {
+      "id": "p0029",
+      "type": "product",
+      "title": "Xerox Принтер 5",
+      "category": "printer",
+      "price": 21700,
+      "brand": "Xerox",
+      "features": [
+        "duplex_print",
+        "wifi"
+      ],
+      "use_cases": [
+        "home",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 5
+    },
+    {
+      "id": "p0030",
+      "type": "product",
+      "title": "HP Принтер 6",
+      "category": "printer",
+      "price": 27000,
+      "brand": "HP",
+      "features": [
+        "duplex_print",
+        "low_cost_printing",
+        "scanner"
+      ],
+      "use_cases": [
+        "home",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 2
+    },
+    {
+      "id": "p0031",
+      "type": "product",
+      "title": "Canon Принтер 7",
+      "category": "printer",
+      "price": 28500,
+      "brand": "Canon",
+      "features": [
+        "duplex_print",
+        "scanner"
+      ],
+      "use_cases": [
+        "home",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 3
+    },
+    {
+      "id": "p0032",
+      "type": "product",
+      "title": "Brother Принтер 8",
+      "category": "printer",
+      "price": 32600,
+      "brand": "Brother",
+      "features": [
+        "low_cost_printing",
+        "scanner",
+        "wifi"
+      ],
+      "use_cases": [
+        "documents",
+        "home"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 3
+    },
+    {
+      "id": "p0033",
+      "type": "product",
+      "title": "Buro Офисное Кресло 1",
+      "category": "office_chair",
+      "price": 9600,
+      "brand": "Buro",
+      "features": [
+        "ergonomic",
+        "mesh_back"
+      ],
+      "use_cases": [
+        "long_sitting",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 1
+    },
+    {
+      "id": "p0034",
+      "type": "product",
+      "title": "Chairman Офисное Кресло 2",
+      "category": "office_chair",
+      "price": 10900,
+      "brand": "Chairman",
+      "features": [
+        "ergonomic",
+        "lumbar_support",
+        "mesh_back"
+      ],
+      "use_cases": [
+        "long_sitting",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 1
+    },
+    {
+      "id": "p0035",
+      "type": "product",
+      "title": "Metta Офисное Кресло 3",
+      "category": "office_chair",
+      "price": 17700,
+      "brand": "Metta",
+      "features": [
+        "ergonomic",
+        "mesh_back"
+      ],
+      "use_cases": [
+        "long_sitting",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 4
+    },
+    {
+      "id": "p0036",
+      "type": "product",
+      "title": "IKEA Офисное Кресло 4",
+      "category": "office_chair",
+      "price": 21600,
+      "brand": "IKEA",
+      "features": [
+        "ergonomic",
+        "headrest",
+        "lumbar_support"
+      ],
+      "use_cases": [
+        "long_sitting",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 4
+    },
+    {
+      "id": "p0037",
+      "type": "product",
+      "title": "Hbada Офисное Кресло 5",
+      "category": "office_chair",
+      "price": 24300,
+      "brand": "Hbada",
+      "features": [
+        "lumbar_support",
+        "mesh_back"
+      ],
+      "use_cases": [
+        "home",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 4
+    },
+    {
+      "id": "p0038",
+      "type": "product",
+      "title": "Buro Офисное Кресло 6",
+      "category": "office_chair",
+      "price": 31300,
+      "brand": "Buro",
+      "features": [
+        "headrest",
+        "lumbar_support",
+        "mesh_back"
+      ],
+      "use_cases": [
+        "home",
+        "long_sitting"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 1
+    },
+    {
+      "id": "p0039",
+      "type": "product",
+      "title": "Chairman Офисное Кресло 7",
+      "category": "office_chair",
+      "price": 32000,
+      "brand": "Chairman",
+      "features": [
+        "headrest",
+        "lumbar_support"
+      ],
+      "use_cases": [
+        "long_sitting",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 2
+    },
+    {
+      "id": "p0040",
+      "type": "product",
+      "title": "Metta Офисное Кресло 8",
+      "category": "office_chair",
+      "price": 37400,
+      "brand": "Metta",
+      "features": [
+        "ergonomic",
+        "lumbar_support",
+        "mesh_back"
+      ],
+      "use_cases": [
+        "long_sitting",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 2
+    },
+    {
+      "id": "p0041",
+      "type": "product",
+      "title": "Microsoft Лицензию По 1",
+      "category": "software_license",
+      "price": 5300,
+      "brand": "Microsoft",
+      "features": [
+        "coding",
+        "design"
+      ],
+      "use_cases": [
+        "coding",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 3
+    },
+    {
+      "id": "p0042",
+      "type": "product",
+      "title": "Kaspersky Лицензию По 2",
+      "category": "software_license",
+      "price": 10200,
+      "brand": "Kaspersky",
+      "features": [
+        "design",
+        "office",
+        "security"
+      ],
+      "use_cases": [
+        "design",
+        "office"
+      ],
+      "stock": "preorder",
+      "delivery_days": 2
+    },
+    {
+      "id": "p0043",
+      "type": "product",
+      "title": "JetBrains Лицензию По 3",
+      "category": "software_license",
+      "price": 13800,
+      "brand": "JetBrains",
+      "features": [
+        "coding",
+        "team"
+      ],
+      "use_cases": [
+        "coding",
+        "security"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 6
+    },
+    {
+      "id": "p0044",
+      "type": "product",
+      "title": "Adobe Лицензию По 4",
+      "category": "software_license",
+      "price": 20200,
+      "brand": "Adobe",
+      "features": [
+        "coding",
+        "design",
+        "security"
+      ],
+      "use_cases": [
+        "design",
+        "office"
+      ],
+      "stock": "limited",
+      "delivery_days": 7
+    },
+    {
+      "id": "p0045",
+      "type": "product",
+      "title": "ESET Лицензию По 5",
+      "category": "software_license",
+      "price": 26000,
+      "brand": "ESET",
+      "features": [
+        "coding",
+        "office"
+      ],
+      "use_cases": [
+        "office",
+        "security"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 6
+    },
+    {
+      "id": "p0046",
+      "type": "product",
+      "title": "Microsoft Лицензию По 6",
+      "category": "software_license",
+      "price": 30900,
+      "brand": "Microsoft",
+      "features": [
+        "coding",
+        "security",
+        "team"
+      ],
+      "use_cases": [
+        "coding",
+        "design"
+      ],
+      "stock": "limited",
+      "delivery_days": 5
+    },
+    {
+      "id": "p0047",
+      "type": "product",
+      "title": "Kaspersky Лицензию По 7",
+      "category": "software_license",
+      "price": 36900,
+      "brand": "Kaspersky",
+      "features": [
+        "office",
+        "team"
+      ],
+      "use_cases": [
+        "coding",
+        "office"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 5
+    },
+    {
+      "id": "p0048",
+      "type": "product",
+      "title": "JetBrains Лицензию По 8",
+      "category": "software_license",
+      "price": 38900,
+      "brand": "JetBrains",
+      "features": [
+        "coding",
+        "design",
+        "office"
+      ],
+      "use_cases": [
+        "design",
+        "security"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 3
+    },
+    {
+      "id": "p0049",
+      "type": "product",
+      "title": "Bitrix24 Crm 1",
+      "category": "crm_package",
+      "price": 13300,
+      "brand": "Bitrix24",
+      "features": [
+        "analytics",
+        "sales"
+      ],
+      "use_cases": [
+        "legal",
+        "sales"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 6,
+      "seats": 5,
+      "cloud": true
+    },
+    {
+      "id": "p0050",
+      "type": "product",
+      "title": "amoCRM Crm 2",
+      "category": "crm_package",
+      "price": 23000,
+      "brand": "amoCRM",
+      "features": [
+        "analytics",
+        "legal",
+        "telephony"
+      ],
+      "use_cases": [
+        "sales",
+        "support"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 7,
+      "seats": 10,
+      "cloud": true
+    },
+    {
+      "id": "p0051",
+      "type": "product",
+      "title": "RetailCRM Crm 3",
+      "category": "crm_package",
+      "price": 32300,
+      "brand": "RetailCRM",
+      "features": [
+        "sales",
+        "telephony"
+      ],
+      "use_cases": [
+        "legal",
+        "support"
+      ],
+      "stock": "limited",
+      "delivery_days": 7,
+      "seats": 50,
+      "cloud": true
+    },
+    {
+      "id": "p0052",
+      "type": "product",
+      "title": "HubSpot Crm 4",
+      "category": "crm_package",
+      "price": 41100,
+      "brand": "HubSpot",
+      "features": [
+        "analytics",
+        "automation",
+        "sales"
+      ],
+      "use_cases": [
+        "sales",
+        "support"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 7,
+      "seats": 50,
+      "cloud": true
+    },
+    {
+      "id": "p0053",
+      "type": "product",
+      "title": "Zoho Crm 5",
+      "category": "crm_package",
+      "price": 47800,
+      "brand": "Zoho",
+      "features": [
+        "automation",
+        "legal"
+      ],
+      "use_cases": [
+        "small_business",
+        "support"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 2,
+      "seats": 5,
+      "cloud": true
+    },
+    {
+      "id": "p0054",
+      "type": "product",
+      "title": "Bitrix24 Crm 6",
+      "category": "crm_package",
+      "price": 59500,
+      "brand": "Bitrix24",
+      "features": [
+        "automation",
+        "legal",
+        "telephony"
+      ],
+      "use_cases": [
+        "legal",
+        "sales"
+      ],
+      "stock": "limited",
+      "delivery_days": 3,
+      "seats": 50,
+      "cloud": true
+    },
+    {
+      "id": "p0055",
+      "type": "product",
+      "title": "amoCRM Crm 7",
+      "category": "crm_package",
+      "price": 68100,
+      "brand": "amoCRM",
+      "features": [
+        "analytics",
+        "legal"
+      ],
+      "use_cases": [
+        "sales",
+        "small_business"
+      ],
+      "stock": "limited",
+      "delivery_days": 2,
+      "seats": 25,
+      "cloud": true
+    },
+    {
+      "id": "p0056",
+      "type": "product",
+      "title": "RetailCRM Crm 8",
+      "category": "crm_package",
+      "price": 76500,
+      "brand": "RetailCRM",
+      "features": [
+        "analytics",
+        "legal",
+        "sales"
+      ],
+      "use_cases": [
+        "small_business",
+        "support"
+      ],
+      "stock": "limited",
+      "delivery_days": 4,
+      "seats": 5,
+      "cloud": true
+    },
+    {
+      "id": "p0057",
+      "type": "product",
+      "title": "StructuraCare План Поддержки 1",
+      "category": "support_plan",
+      "price": 4700,
+      "brand": "StructuraCare",
+      "features": [
+        "integration",
+        "technical_support"
+      ],
+      "use_cases": [
+        "ops",
+        "support"
+      ],
+      "stock": "preorder",
+      "delivery_days": 4
+    },
+    {
+      "id": "p0058",
+      "type": "product",
+      "title": "SLA Pro План Поддержки 2",
+      "category": "support_plan",
+      "price": 11800,
+      "brand": "SLA Pro",
+      "features": [
+        "integration",
+        "sla",
+        "technical_support"
+      ],
+      "use_cases": [
+        "integration",
+        "ops"
+      ],
+      "stock": "preorder",
+      "delivery_days": 3
+    },
+    {
+      "id": "p0059",
+      "type": "product",
+      "title": "HelpDesk Plus План Поддержки 3",
+      "category": "support_plan",
+      "price": 20600,
+      "brand": "HelpDesk Plus",
+      "features": [
+        "integration",
+        "technical_support"
+      ],
+      "use_cases": [
+        "ops",
+        "support"
+      ],
+      "stock": "limited",
+      "delivery_days": 6
+    },
+    {
+      "id": "p0060",
+      "type": "product",
+      "title": "OpsGuard План Поддержки 4",
+      "category": "support_plan",
+      "price": 27800,
+      "brand": "OpsGuard",
+      "features": [
+        "integration",
+        "priority_support",
+        "technical_support"
+      ],
+      "use_cases": [
+        "integration",
+        "ops"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 2
+    },
+    {
+      "id": "p0061",
+      "type": "product",
+      "title": "StructuraCare План Поддержки 5",
+      "category": "support_plan",
+      "price": 35000,
+      "brand": "StructuraCare",
+      "features": [
+        "integration",
+        "technical_support"
+      ],
+      "use_cases": [
+        "ops",
+        "support"
+      ],
+      "stock": "preorder",
+      "delivery_days": 3
+    },
+    {
+      "id": "p0062",
+      "type": "product",
+      "title": "SLA Pro План Поддержки 6",
+      "category": "support_plan",
+      "price": 40400,
+      "brand": "SLA Pro",
+      "features": [
+        "integration",
+        "sla",
+        "technical_support"
+      ],
+      "use_cases": [
+        "integration",
+        "ops"
+      ],
+      "stock": "limited",
+      "delivery_days": 7
+    },
+    {
+      "id": "p0063",
+      "type": "product",
+      "title": "HelpDesk Plus План Поддержки 7",
+      "category": "support_plan",
+      "price": 49300,
+      "brand": "HelpDesk Plus",
+      "features": [
+        "priority_support",
+        "technical_support"
+      ],
+      "use_cases": [
+        "integration",
+        "ops"
+      ],
+      "stock": "in_stock",
+      "delivery_days": 5
+    },
+    {
+      "id": "p0064",
+      "type": "product",
+      "title": "OpsGuard План Поддержки 8",
+      "category": "support_plan",
+      "price": 54700,
+      "brand": "OpsGuard",
+      "features": [
+        "integration",
+        "sla",
+        "technical_support"
+      ],
+      "use_cases": [
+        "integration",
+        "support"
+      ],
+      "stock": "preorder",
+      "delivery_days": 6
+    }
+  ],
+  "support_docs": [
+    {
+      "id": "doc_delivery",
+      "type": "policy",
+      "title": "Delivery policy",
+      "text": "Delivery takes 1-5 business days depending on region. Courier delivery is available."
+    },
+    {
+      "id": "doc_return",
+      "type": "policy",
+      "title": "Return policy",
+      "text": "Most products can be returned within 14 days if the product is unused and documents are present."
+    },
+    {
+      "id": "doc_support",
+      "type": "policy",
+      "title": "Technical support",
+      "text": "Technical incidents can be escalated to an operator when diagnostics or account data are required."
+    }
+  ]
+}

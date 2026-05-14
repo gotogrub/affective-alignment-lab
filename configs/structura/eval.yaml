@@ -1,0 +1,17 @@
+project_name: structura
+run_name: eval-smoke
+prompt_template: instruction
+
+data:
+  test_path: data/structura/processed/test.jsonl
+  max_input_length: 1024
+
+generation:
+  max_new_tokens: 512
+  num_beams: 1
+  do_sample: false
+  temperature: 0.0
+
+outputs:
+  predictions_path: data/structura/predictions/rules_baseline_predictions.jsonl
+  metrics_path: outputs/structura/rules_baseline_metrics.json

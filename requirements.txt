@@ -9,6 +9,12 @@ numpy
 matplotlib
 tqdm
 pyyaml
+pydantic>=2.6
+sentencepiece
+protobuf
+huggingface_hub
+gradio
+pytest
 
 jupyter
 ipykernel

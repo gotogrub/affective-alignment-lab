@@ -10,10 +10,13 @@ data/raw/
 data/processed/
 *.csv
 *.jsonl
+!data/structura/processed/*.jsonl
+!data/structura/samples/*.jsonl
 *.parquet
 
 # Models/checkpoints
-models/
+models/*
+!models/README.md
 checkpoints/
 outputs/
 runs/

@@ -1,0 +1,12 @@
+catalog:
+  output: data/structura/raw/catalog_v1.json
+  seed: 42
+  per_category: 8
+
+dataset:
+  output: data/structura/processed/structura_smoke.jsonl
+  split_dir: data/structura/processed
+  num_samples: 1000
+  seed: 42
+  train_ratio: 0.8
+  valid_ratio: 0.1

@@ -1,0 +1,21 @@
+project_name: structura
+run_name: rubert-tiny2-intent-baseline
+model_name: cointegrated/rubert-tiny2
+
+data:
+  train_path: data/structura/processed/train.jsonl
+  valid_path: data/structura/processed/valid.jsonl
+  test_path: data/structura/processed/test.jsonl
+
+training:
+  output_dir: outputs/structura/rubert-tiny2-intent-baseline
+  num_train_epochs: 4
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  learning_rate: 0.00003
+  weight_decay: 0.01
+  max_length: 256
+  logging_steps: 50
+  eval_steps: 200
+  save_steps: 200
+  report_to: none

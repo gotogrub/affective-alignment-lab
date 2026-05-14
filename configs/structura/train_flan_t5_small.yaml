@@ -1,0 +1,33 @@
+project_name: structura
+run_name: flan-t5-small-smoke
+model_name: google/flan-t5-small
+prompt_template: instruction
+
+data:
+  train_path: data/structura/processed/train.jsonl
+  valid_path: data/structura/processed/valid.jsonl
+  test_path: data/structura/processed/test.jsonl
+
+training:
+  output_dir: outputs/structura/flan-t5-small-smoke
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 0.00005
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+  fp16: true
+  logging_steps: 25
+  eval_steps: 100
+  save_steps: 100
+  save_total_limit: 3
+  max_input_length: 1024
+  max_target_length: 512
+  report_to: none
+
+generation:
+  max_new_tokens: 512
+  num_beams: 1
+  do_sample: false
+  temperature: 0.0

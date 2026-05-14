@@ -3,10 +3,38 @@ name = "affective-alignment-lab"
 version = "0.1.0"
 description = "Emotion-vector and affective alignment experiments for language models"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "accelerate",
+    "datasets",
+    "evaluate",
+    "gradio",
+    "huggingface_hub",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "protobuf",
+    "pydantic>=2.6",
+    "pyyaml",
+    "scikit-learn",
+    "sentencepiece",
+    "torch",
+    "tqdm",
+    "transformers",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel",
+    "jupyter",
+    "pytest",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
 
 [build-system]
 requires = ["setuptools>=68"]
