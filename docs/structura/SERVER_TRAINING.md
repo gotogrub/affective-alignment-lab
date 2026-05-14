@@ -73,6 +73,14 @@ python scripts/structura/train_seq2seq.py \
   --config configs/structura/train_flan_t5_small.yaml
 ```
 
+For more or less console detail:
+
+```bash
+python scripts/structura/train_seq2seq.py \
+  --config configs/structura/train_flan_t5_small.yaml \
+  --log-level DEBUG
+```
+
 ## 6. Evaluate
 
 ```bash
@@ -82,6 +90,8 @@ python scripts/structura/evaluate.py \
   --output-predictions data/structura/predictions/flan_t5_small_predictions.jsonl \
   --output-metrics outputs/structura/flan-t5-small-smoke/metrics.json
 ```
+
+Evaluation logs the first generated samples and writes parse/schema error examples to `outputs/structura/<run>/errors.jsonl`.
 
 ## 7. Push to Hugging Face
 

@@ -2,6 +2,12 @@ project_name: structura
 run_name: eval-smoke
 prompt_template: instruction
 
+logging:
+  level: INFO
+  debug_samples: 5
+  log_every: 25
+  error_sample_limit: 25
+
 data:
   test_path: data/structura/processed/test.jsonl
   max_input_length: 1024
