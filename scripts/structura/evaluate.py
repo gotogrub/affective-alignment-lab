@@ -17,6 +17,31 @@ from structura.formatting import format_prompt
 from structura.metrics import evaluate_prediction_records
 
 
+def run_id_from_checkpoint(checkpoint: str) -> str:
+    return Path(checkpoint.rstrip("/")).name or "checkpoint"
+
+
+def default_output_paths(args: argparse.Namespace, config: dict[str, Any]) -> tuple[Path, Path]:
+    if args.checkpoint and args.baseline is None:
+        run_id = run_id_from_checkpoint(args.checkpoint)
+        return (
+            Path(f"data/structura/predictions/{run_id}_predictions.jsonl"),
+            Path(f"outputs/structura/{run_id}/metrics.json"),
+        )
+
+    if args.baseline == "rules" or not args.checkpoint:
+        return (
+            Path("data/structura/predictions/rules_baseline_predictions.jsonl"),
+            Path("outputs/structura/rules_baseline_metrics.json"),
+        )
+
+    outputs = config.get("outputs", {})
+    return (
+        Path(outputs.get("predictions_path", "data/structura/predictions/predictions.jsonl")),
+        Path(outputs.get("metrics_path", "outputs/structura/metrics.json")),
+    )
+
+
 def load_yaml(path: Path) -> dict[str, Any]:
     import yaml
 
@@ -45,6 +70,7 @@ def generate_with_checkpoint(checkpoint: str, records: list[dict[str, Any]], con
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
+    model.eval()
     generation_config = config.get("generation", {})
     template = config.get("prompt_template", "instruction")
     max_input_length = config.get("data", {}).get("max_input_length", 1024)
@@ -53,12 +79,13 @@ def generate_with_checkpoint(checkpoint: str, records: list[dict[str, Any]], con
     for record in records:
         prompt = format_prompt(record, template=template)
         inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=max_input_length).to(device)
-        output_ids = model.generate(
-            **inputs,
-            max_new_tokens=generation_config.get("max_new_tokens", 512),
-            num_beams=generation_config.get("num_beams", 1),
-            do_sample=generation_config.get("do_sample", False),
-        )
+        with torch.no_grad():
+            output_ids = model.generate(
+                **inputs,
+                max_new_tokens=generation_config.get("max_new_tokens", 512),
+                num_beams=generation_config.get("num_beams", 1),
+                do_sample=generation_config.get("do_sample", False),
+            )
         raw = tokenizer.decode(output_ids[0], skip_special_tokens=True)
         prediction_records.append({"id": record["id"], "input": record["input"], "target": record["target"], "prediction": raw})
     return prediction_records
@@ -68,10 +95,9 @@ def main() -> None:
     args = parse_args()
     config = load_yaml(args.config) if args.config.exists() else {}
 
-    output_predictions = args.output_predictions or Path(
-        config.get("outputs", {}).get("predictions_path", "data/structura/predictions/predictions.jsonl")
-    )
-    output_metrics = args.output_metrics or Path(config.get("outputs", {}).get("metrics_path", "outputs/structura/metrics.json"))
+    default_predictions, default_metrics = default_output_paths(args, config)
+    output_predictions = args.output_predictions or default_predictions
+    output_metrics = args.output_metrics or default_metrics
 
     if args.predictions:
         prediction_records = read_jsonl(args.predictions)

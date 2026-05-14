@@ -17,7 +17,11 @@ training:
   learning_rate: 0.00003
   weight_decay: 0.01
   warmup_ratio: 0.03
-  fp16: true
+  fp16: false
+  bf16: auto
+  max_grad_norm: 1.0
+  logging_nan_inf_filter: false
+  overwrite_output_dir: true
   logging_steps: 50
   eval_steps: 500
   save_steps: 500

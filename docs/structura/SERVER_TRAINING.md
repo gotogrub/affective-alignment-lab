@@ -58,6 +58,12 @@ python scripts/structura/validate_jsonl.py \
 
 ## 5. Train FLAN-T5 small
 
+If you previously produced a run with `loss=0`, `grad_norm=nan` or `eval_loss=nan`, remove that checkpoint first:
+
+```bash
+rm -rf outputs/structura/flan-t5-small-smoke
+```
+
 ```bash
 python scripts/structura/train_seq2seq.py \
   --config configs/structura/train_flan_t5_small.yaml

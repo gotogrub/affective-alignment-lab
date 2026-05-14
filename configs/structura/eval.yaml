@@ -13,5 +13,5 @@ generation:
   temperature: 0.0
 
 outputs:
-  predictions_path: data/structura/predictions/rules_baseline_predictions.jsonl
-  metrics_path: outputs/structura/rules_baseline_metrics.json
+  predictions_path: data/structura/predictions/predictions.jsonl
+  metrics_path: outputs/structura/metrics.json
