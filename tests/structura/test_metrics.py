@@ -29,4 +29,7 @@ def test_evaluate_prediction_records_counts_schema_and_grounding() -> None:
     assert metrics["valid_json_rate"] == 1.0
     assert metrics["schema_valid_rate"] == 1.0
     assert metrics["product_selection_f1"] == 1.0
+    assert metrics["product_selection_f1_on_positive"] == 1.0
+    assert metrics["empty_selection_on_positive_rate"] == 0.0
     assert metrics["hallucination_rate"] == 0.0
+    assert metrics["scenario_metrics"]["unknown"]["total"] == 1

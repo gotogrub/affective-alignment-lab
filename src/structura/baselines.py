@@ -45,15 +45,15 @@ def detect_intent(query: str) -> str:
         return "unknown"
     if any(word in q for word in ["вернуть", "возврат", "верну товар"]):
         return "return_policy"
-    if any(word in q for word in ["достав", "привез", "курьер"]):
-        return "delivery_question"
-    if any(word in q for word in ["где мой заказ", "статус заказа", "заказ не приш"]):
+    if any(word in q for word in ["где мой заказ", "статус заказа", "заказ не приш", "заказ задерж", "оплата прошла", "статус моего заказа"]):
         return "order_status"
-    if any(word in q for word in ["сломал", "не работает", "ошибка", "настроить"]):
+    if any(word in q for word in ["достав", "привез", "курьер", "сроки доставки", "варианты доставки", "получить заказ"]):
+        return "delivery_question"
+    if any(word in q for word in ["сломал", "не работает", "ошибка", "настроить", "помощь", "помогите", "активац", "запустить"]):
         return "technical_support"
-    if any(word in q for word in ["ужас", "жалоб", "охрен", "обман"]):
+    if any(word in q for word in ["ужас", "жалоб", "охрен", "обман", "недоволен", "претенз", "плохой сервис", "разбирательство", "сорвал"]):
         return "complaint"
-    if any(word in q for word in ["оператор", "человек", "менеджер"]):
+    if any(word in q for word in ["оператор", "человек", "менеджер", "специалист", "живой", "соедините", "передайте"]):
         return "human_handoff"
     if any(word in q for word in ["сравни", "сравнить", "чем отличается"]):
         return "product_comparison"
@@ -176,6 +176,10 @@ def rules_baseline(user_query: str, retrieved_context: list[dict[str, Any]]) -> 
     category = extract_category(user_query)
     constraints = extract_constraints(user_query, retrieved_context)
     security_flags = ["prompt_injection"] if INJECTION_RE.search(user_query) else []
+    product_intents = {"product_recommendation", "product_search", "product_comparison"}
+    if intent not in product_intents:
+        category = None
+        constraints = {}
     selected_products: list[str] = []
     rejected_products: list[dict[str, str]] = []
     needs_clarification = False
@@ -186,7 +190,7 @@ def rules_baseline(user_query: str, retrieved_context: list[dict[str, Any]]) -> 
 
     if security_flags:
         answer_type = "security_warning"
-    elif intent in {"product_recommendation", "product_search", "product_comparison"}:
+    elif intent in product_intents:
         selected_products, rejected_products = select_products(retrieved_context, category, constraints)
         if not category and not constraints:
             needs_clarification = True

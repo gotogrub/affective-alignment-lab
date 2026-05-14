@@ -22,8 +22,10 @@ Use `data/structura` as the single dataset workspace.
    `python scripts/structura/generate_dataset.py --catalog data/structura/raw/catalog_v1.json --output data/structura/processed/structura_smoke.jsonl --num-samples 1000`
 3. Validate:
    `python scripts/structura/validate_jsonl.py --path data/structura/processed/train.jsonl --path data/structura/processed/valid.jsonl --path data/structura/processed/test.jsonl`
+4. Audit split leakage:
+   `python scripts/structura/audit_dataset.py --fail-on-leakage`
 
-The generator must cover product requests, comparisons, no-match cases, ambiguous requests, delivery, returns, order status, technical support, complaints, human handoff and prompt injection.
+The generator must cover product requests, product search, comparisons, no-match cases, ambiguous requests, delivery, returns, order status, technical support, complaints, human handoff and prompt injection.
 
 ## 3. Baselines before fine-tuning
 

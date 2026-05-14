@@ -42,6 +42,7 @@ Structura uses JSONL. Each row is one supervised sample.
 ## Supported Scenarios
 
 - `product_request`
+- `product_search`
 - `product_comparison`
 - `no_match`
 - `ambiguous`
@@ -62,7 +63,7 @@ Structura uses JSONL. Each row is one supervised sample.
 
 ## Splits
 
-The default generator writes:
+The default generator writes grouped, scenario-stratified splits. Exact duplicate `input + target` groups are kept inside a single split to avoid train/test leakage.
 
 - `data/structura/processed/structura_smoke.jsonl`
 - `data/structura/processed/train.jsonl`
@@ -70,3 +71,9 @@ The default generator writes:
 - `data/structura/processed/test.jsonl`
 
 Default split: 80 percent train, 10 percent valid, 10 percent test.
+
+Audit the generated splits with:
+
+```bash
+python scripts/structura/audit_dataset.py --fail-on-leakage
+```

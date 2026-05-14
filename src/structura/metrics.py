@@ -38,7 +38,7 @@ def exact_match(prediction: dict[str, Any] | None, target: dict[str, Any]) -> bo
     return compact_json(prediction) == compact_json(target)
 
 
-def evaluate_prediction_records(records: list[dict[str, Any]]) -> dict[str, Any]:
+def evaluate_prediction_records(records: list[dict[str, Any]], *, include_breakdowns: bool = True) -> dict[str, Any]:
     total = len(records)
     if total == 0:
         return {"total": 0}
@@ -53,6 +53,11 @@ def evaluate_prediction_records(records: list[dict[str, Any]]) -> dict[str, Any]
     product_recall_values: list[float] = []
     hallucinated_ids = 0
     predicted_ids = 0
+    predictions_with_hallucinations = 0
+    empty_predictions = 0
+    positive_selection_total = 0
+    empty_on_positive_total = 0
+    product_f1_positive_values: list[float] = []
     prediction_errors: dict[str, int] = {}
 
     for record in records:
@@ -70,18 +75,31 @@ def evaluate_prediction_records(records: list[dict[str, Any]]) -> dict[str, Any]
             exact += int(exact_match(prediction, target))
             selected_pred = set(prediction.get("selected_products", []))
             selected_gold = set(target.get("selected_products", []))
+            if not selected_pred:
+                empty_predictions += 1
+            if selected_gold:
+                positive_selection_total += 1
+                if not selected_pred:
+                    empty_on_positive_total += 1
             product_scores = prf(selected_pred, selected_gold)
             product_precision_values.append(product_scores["precision"])
             product_recall_values.append(product_scores["recall"])
             product_f1_values.append(product_scores["f1"])
+            if selected_gold:
+                product_f1_positive_values.append(product_scores["f1"])
             hallucinated = hallucinated_product_ids(prediction, record["input"].get("retrieved_context", []))
             hallucinated_ids += len(hallucinated)
+            predictions_with_hallucinations += int(bool(hallucinated))
             predicted_ids += len(selected_pred)
         else:
             parsed_predictions.append(None)
             product_precision_values.append(0.0)
             product_recall_values.append(0.0)
             product_f1_values.append(0.0)
+            if target.get("selected_products"):
+                positive_selection_total += 1
+                empty_on_positive_total += 1
+                product_f1_positive_values.append(0.0)
             key = (validation.error or "unknown_error").split(":", 1)[0]
             prediction_errors[key] = prediction_errors.get(key, 0) + 1
 
@@ -98,7 +116,7 @@ def evaluate_prediction_records(records: list[dict[str, Any]]) -> dict[str, Any]
         [bool("prompt_injection" in target.get("security_flags", [])) for target in targets],
     )
 
-    return {
+    metrics: dict[str, Any] = {
         "total": total,
         "valid_json_rate": safe_div(valid_json, total),
         "schema_valid_rate": safe_div(schema_valid, total),
@@ -111,9 +129,26 @@ def evaluate_prediction_records(records: list[dict[str, Any]]) -> dict[str, Any]
         "product_selection_precision": safe_div(sum(product_precision_values), total),
         "product_selection_recall": safe_div(sum(product_recall_values), total),
         "product_selection_f1": safe_div(sum(product_f1_values), total),
+        "product_selection_f1_on_positive": safe_div(sum(product_f1_positive_values), len(product_f1_positive_values)),
+        "positive_selection_total": positive_selection_total,
+        "empty_selection_rate": safe_div(empty_predictions, schema_valid),
+        "empty_selection_on_positive_rate": safe_div(empty_on_positive_total, positive_selection_total),
         "hallucination_rate": safe_div(hallucinated_ids, predicted_ids),
+        "hallucinated_prediction_rate": safe_div(predictions_with_hallucinations, schema_valid),
         "clarification_f1": clarification_scores["f1"],
         "needs_human_f1": human_scores["f1"],
         "injection_detection_f1": injection_scores["f1"],
         "prediction_errors": dict(sorted(prediction_errors.items())),
     }
+
+    if include_breakdowns:
+        scenarios = sorted({str(record.get("scenario") or "unknown") for record in records})
+        metrics["scenario_metrics"] = {
+            scenario: evaluate_prediction_records(
+                [record for record in records if str(record.get("scenario") or "unknown") == scenario],
+                include_breakdowns=False,
+            )
+            for scenario in scenarios
+        }
+
+    return metrics

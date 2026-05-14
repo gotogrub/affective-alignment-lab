@@ -17,6 +17,19 @@ from structura.formatting import format_prompt
 from structura.metrics import evaluate_prediction_records
 
 
+def prediction_record(record: dict[str, Any], prediction: str | dict[str, Any]) -> dict[str, Any]:
+    output = {
+        "id": record["id"],
+        "input": record["input"],
+        "target": record["target"],
+        "prediction": prediction,
+    }
+    for key in ("scenario", "split", "meta"):
+        if key in record:
+            output[key] = record[key]
+    return output
+
+
 def run_id_from_checkpoint(checkpoint: str) -> str:
     return Path(checkpoint.rstrip("/")).name or "checkpoint"
 
@@ -87,7 +100,7 @@ def generate_with_checkpoint(checkpoint: str, records: list[dict[str, Any]], con
                 do_sample=generation_config.get("do_sample", False),
             )
         raw = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-        prediction_records.append({"id": record["id"], "input": record["input"], "target": record["target"], "prediction": raw})
+        prediction_records.append(prediction_record(record, raw))
     return prediction_records
 
 
@@ -109,12 +122,10 @@ def main() -> None:
 
         if args.baseline == "rules" or not args.checkpoint:
             prediction_records = [
-                {
-                    "id": record["id"],
-                    "input": record["input"],
-                    "target": record["target"],
-                    "prediction": rules_baseline(record["input"]["user_query"], record["input"].get("retrieved_context", [])),
-                }
+                prediction_record(
+                    record,
+                    rules_baseline(record["input"]["user_query"], record["input"].get("retrieved_context", [])),
+                )
                 for record in records
             ]
         else:

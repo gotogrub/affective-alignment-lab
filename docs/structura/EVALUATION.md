@@ -11,7 +11,11 @@ Evaluation is implemented in `src/structura/metrics.py` and exposed through `scr
 - `category_accuracy`: exact match on `category`.
 - `answer_type_accuracy`: exact match on `answer_type`.
 - `product_selection_precision`, `product_selection_recall`, `product_selection_f1`: set comparison for `selected_products`.
+- `product_selection_f1_on_positive`: product F1 only for examples where the target selects at least one product.
+- `empty_selection_rate`: fraction of schema-valid predictions with no selected products.
+- `empty_selection_on_positive_rate`: fraction of positive-selection targets where the model selected nothing.
 - `hallucination_rate`: selected product ids absent from product context divided by predicted selected ids.
+- `hallucinated_prediction_rate`: fraction of schema-valid predictions containing at least one hallucinated product id.
 - `clarification_f1`: F1 for `needs_clarification`.
 - `needs_human_f1`: F1 for `needs_human`.
 - `injection_detection_f1`: F1 for `prompt_injection` in `security_flags`.
@@ -30,6 +34,8 @@ This writes:
 
 - `data/structura/predictions/rules_baseline_predictions.jsonl`
 - `outputs/structura/rules_baseline_metrics.json`
+
+The metrics file also contains `scenario_metrics` for per-scenario debugging.
 
 ## Model Evaluation
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import random
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -52,12 +53,52 @@ def samples_to_records(samples: Iterable[StructuraSample]) -> list[dict[str, Any
     return [dump_model(sample) for sample in samples]
 
 
+def canonical_json(payload: Any) -> str:
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def split_group_key(record: dict[str, Any], *, group_by: str = "input_target") -> str:
+    if group_by == "input":
+        payload = record["input"]
+    elif group_by == "target":
+        payload = record["target"]
+    elif group_by == "input_target":
+        payload = {"input": record["input"], "target": record["target"]}
+    else:
+        raise ValueError(f"Unknown group_by value: {group_by}")
+    return canonical_json(payload)
+
+
+def _split_group_counts(total_groups: int, train_ratio: float, valid_ratio: float) -> tuple[int, int, int]:
+    if total_groups <= 0:
+        return 0, 0, 0
+    if total_groups == 1:
+        return 1, 0, 0
+    if total_groups == 2:
+        return 1, 0, 1
+
+    test_ratio = 1.0 - train_ratio - valid_ratio
+    valid_count = max(1, round(total_groups * valid_ratio)) if valid_ratio > 0 else 0
+    test_count = max(1, round(total_groups * test_ratio))
+
+    while valid_count + test_count >= total_groups:
+        if valid_count >= test_count and valid_count > 0:
+            valid_count -= 1
+        else:
+            test_count -= 1
+
+    train_count = total_groups - valid_count - test_count
+    return train_count, valid_count, test_count
+
+
 def split_records(
     records: list[dict[str, Any]],
     *,
     train_ratio: float = 0.8,
     valid_ratio: float = 0.1,
     seed: int = 42,
+    group_by: str = "input_target",
+    stratify_key: str = "scenario",
 ) -> dict[str, list[dict[str, Any]]]:
     if not 0 < train_ratio < 1:
         raise ValueError("train_ratio must be between 0 and 1")
@@ -66,18 +107,31 @@ def split_records(
     if train_ratio + valid_ratio >= 1:
         raise ValueError("train_ratio + valid_ratio must be below 1")
 
-    shuffled = list(records)
-    random.Random(seed).shuffle(shuffled)
-    train_end = int(len(shuffled) * train_ratio)
-    valid_end = train_end + int(len(shuffled) * valid_ratio)
+    rng = random.Random(seed)
+    grouped: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
+    for record in records:
+        stratum = str(record.get(stratify_key) or "unknown")
+        grouped[stratum][split_group_key(record, group_by=group_by)].append(record)
 
-    splits = {
-        "train": shuffled[:train_end],
-        "valid": shuffled[train_end:valid_end],
-        "test": shuffled[valid_end:],
-    }
+    splits: dict[str, list[dict[str, Any]]] = {"train": [], "valid": [], "test": []}
+    for stratum in sorted(grouped):
+        groups = list(grouped[stratum].values())
+        rng.shuffle(groups)
+        train_count, valid_count, _ = _split_group_counts(len(groups), train_ratio, valid_ratio)
+
+        train_groups = groups[:train_count]
+        valid_groups = groups[train_count : train_count + valid_count]
+        test_groups = groups[train_count + valid_count :]
+
+        for group in train_groups:
+            splits["train"].extend(group)
+        for group in valid_groups:
+            splits["valid"].extend(group)
+        for group in test_groups:
+            splits["test"].extend(group)
 
     for split_name, split_records_ in splits.items():
+        rng.shuffle(split_records_)
         for record in split_records_:
             record["split"] = split_name
 

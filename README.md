@@ -50,6 +50,8 @@ python scripts/structura/validate_jsonl.py \
   --path data/structura/processed/train.jsonl \
   --path data/structura/processed/valid.jsonl \
   --path data/structura/processed/test.jsonl
+
+python scripts/structura/audit_dataset.py --fail-on-leakage
 ```
 
 Run the rules baseline:

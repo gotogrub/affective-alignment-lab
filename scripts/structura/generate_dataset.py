@@ -22,6 +22,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--train-ratio", type=float, default=0.8)
     parser.add_argument("--valid-ratio", type=float, default=0.1)
+    parser.add_argument("--group-by", choices=["input", "target", "input_target"], default="input_target")
+    parser.add_argument("--stratify-key", default="scenario")
     parser.add_argument("--no-splits", action="store_true")
     return parser.parse_args()
 
@@ -34,7 +36,14 @@ def main() -> None:
     print(f"Wrote {len(records)} records to {args.output}")
 
     if not args.no_splits:
-        splits = split_records(records, train_ratio=args.train_ratio, valid_ratio=args.valid_ratio, seed=args.seed)
+        splits = split_records(
+            records,
+            train_ratio=args.train_ratio,
+            valid_ratio=args.valid_ratio,
+            seed=args.seed,
+            group_by=args.group_by,
+            stratify_key=args.stratify_key,
+        )
         for split_name, split_records_ in splits.items():
             path = args.split_dir / f"{split_name}.jsonl"
             write_jsonl(path, split_records_)
