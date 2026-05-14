@@ -66,6 +66,8 @@ If you previously produced a run with `loss=0`, `grad_norm=nan` or `eval_loss=na
 rm -rf outputs/structura/flan-t5-small-smoke
 ```
 
+The default config uses lightweight checkpoints: model weights are saved, but optimizer/scheduler state is skipped to avoid multi-hundred-MB checkpoint writes on small disks.
+
 ```bash
 python scripts/structura/train_seq2seq.py \
   --config configs/structura/train_flan_t5_small.yaml

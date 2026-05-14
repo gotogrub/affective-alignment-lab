@@ -73,6 +73,23 @@ def build_training_arguments(args_cls: Any, training_kwargs: dict[str, Any], *, 
     return args_cls(**filtered)
 
 
+def build_lightweight_trainer_class(base_trainer_cls: Any) -> Any:
+    class LightweightSeq2SeqTrainer(base_trainer_cls):  # type: ignore[misc, valid-type]
+        def __init__(self, *args: Any, save_optimizer_state: bool = True, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.save_optimizer_state = save_optimizer_state
+
+        def _save_optimizer_and_scheduler(self, *args: Any, **kwargs: Any) -> None:
+            if self.save_optimizer_state:
+                return super()._save_optimizer_and_scheduler(*args, **kwargs)
+
+            output_dir = args[0] if args else kwargs.get("output_dir", "checkpoint")
+            print(f"Skipping optimizer/scheduler state save for lightweight checkpoint: {output_dir}")
+            return None
+
+    return LightweightSeq2SeqTrainer
+
+
 def main() -> None:
     args = parse_args()
     config = load_yaml(args.config)
@@ -173,6 +190,8 @@ def main() -> None:
         "save_steps": training_config.get("save_steps", 500),
         "save_total_limit": training_config.get("save_total_limit", 3),
         "overwrite_output_dir": training_config.get("overwrite_output_dir", True),
+        "save_only_model": training_config.get("save_only_model", False),
+        "save_safetensors": training_config.get("save_safetensors", True),
         "save_strategy": "steps",
         "predict_with_generate": True,
         "max_grad_norm": training_config.get("max_grad_norm", 1.0),
@@ -193,7 +212,8 @@ def main() -> None:
         trainer_kwargs["processing_class"] = tokenizer
     elif "tokenizer" in trainer_params:
         trainer_kwargs["tokenizer"] = tokenizer
-    trainer = Seq2SeqTrainer(**trainer_kwargs)
+    trainer_cls = build_lightweight_trainer_class(Seq2SeqTrainer)
+    trainer = trainer_cls(**trainer_kwargs, save_optimizer_state=training_config.get("save_optimizer_state", True))
 
     trainer.train()
     trainer.save_model(training_config["output_dir"])
