@@ -28,8 +28,10 @@ jobs:
       - name: Validate worker source
         run: python -m compileall -q src/structura scripts/structura
       - name: Reproduce audited dataset and rules baseline
-        run: dvc repro
+        run: |
+          cp dvc.lock /tmp/dvc.lock.before
+          dvc repro
       - name: Require a clean DVC pipeline
         run: |
           dvc status
-          git diff --exit-code -- dvc.lock
+          python -c "import pathlib, yaml; before=yaml.safe_load(pathlib.Path('/tmp/dvc.lock.before').read_text()); after=yaml.safe_load(pathlib.Path('dvc.lock').read_text()); assert before == after, 'DVC lock changed semantically'"
