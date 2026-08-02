@@ -1,0 +1,11 @@
+accelerate==1.11.0
+bitsandbytes==0.48.1
+datasets==4.3.0
+huggingface-hub==0.36.0
+lm-format-enforcer==0.11.3
+mlflow==3.5.1
+peft==0.17.1
+pydantic==2.12.3
+PyYAML==6.0.3
+transformers==4.57.1
+trl==0.24.0

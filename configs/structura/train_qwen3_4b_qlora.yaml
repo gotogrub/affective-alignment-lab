@@ -1,0 +1,33 @@
+base_model:
+  id: Qwen/Qwen3-4B
+  revision: 1cfa9a7208912126459214e8b04321603b3df60c
+
+data:
+  train_path: data/structura/processed/train.jsonl
+  valid_path: data/structura/processed/valid.jsonl
+  prompt_template: instruction
+  max_length: 1536
+
+training:
+  output_dir: outputs/structura/qwen3-4b-qlora
+  seed: 42
+  epochs: 2
+  max_steps: -1
+  learning_rate: 0.0002
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  gradient_checkpointing: true
+  logging_steps: 5
+  eval_steps: 25
+  save_steps: 25
+  save_total_limit: 2
+
+qlora:
+  quant_type: nf4
+  double_quant: true
+  compute_dtype: bfloat16
+  rank: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]

@@ -24,6 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--valid", type=Path, default=Path("data/structura/processed/valid.jsonl"))
     parser.add_argument("--test", type=Path, default=Path("data/structura/processed/test.jsonl"))
     parser.add_argument("--fail-on-leakage", action="store_true")
+    parser.add_argument("--output", type=Path)
     return parser.parse_args()
 
 
@@ -107,7 +108,11 @@ def main() -> None:
         "needs_human": dict(sorted(Counter(record["target"]["needs_human"] for record in records).items())),
         "security_flags": dict(sorted(Counter(",".join(record["target"]["security_flags"]) or "none" for record in records).items())),
     }
-    print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))
+    rendered = json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True)
+    print(rendered)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(rendered + "\n", encoding="utf-8")
 
     if invalid or (args.fail_on_leakage and duplicates["cross_split_duplicate_groups"]):
         raise SystemExit(1)
