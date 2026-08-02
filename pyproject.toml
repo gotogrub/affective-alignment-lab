@@ -36,6 +36,9 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 
+[tool.ruff.lint.per-file-ignores]
+"scripts/structura/*.py" = ["E402"]
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"

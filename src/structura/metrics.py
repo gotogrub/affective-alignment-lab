@@ -140,6 +140,20 @@ def evaluate_prediction_records(records: list[dict[str, Any]], *, include_breakd
         "injection_detection_f1": injection_scores["f1"],
         "prediction_errors": dict(sorted(prediction_errors.items())),
     }
+    metrics["hallucinated_product_id_rate"] = metrics["hallucination_rate"]
+    metrics["clarification_accuracy"] = metrics["needs_clarification_accuracy"]
+    metrics["handoff_accuracy"] = metrics["needs_human_accuracy"]
+    metrics["semantic_correctness"] = sum(
+        float(metrics[name])
+        for name in (
+            "intent_accuracy",
+            "answer_type_accuracy",
+            "category_accuracy",
+            "product_selection_f1",
+            "clarification_accuracy",
+            "handoff_accuracy",
+        )
+    ) / 6
 
     if include_breakdowns:
         scenarios = sorted({str(record.get("scenario") or "unknown") for record in records})

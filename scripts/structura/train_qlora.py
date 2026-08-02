@@ -39,6 +39,76 @@ def load_config(path: Path) -> dict[str, Any]:
         return yaml.safe_load(stream)
 
 
+def load_approved_run(path: Path, output_dir: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    training = payload["training_config"]
+    if canonical_hash(training) != payload["config_hash"]:
+        raise RuntimeError("Approved training configuration hash is invalid")
+    required = {
+        "method",
+        "epochs",
+        "learning_rate",
+        "batch_size",
+        "eval_batch_size",
+        "gradient_accumulation_steps",
+        "max_seq_length",
+        "gradient_checkpointing",
+        "max_steps",
+        "logging_steps",
+        "eval_steps",
+        "save_steps",
+        "save_total_limit",
+        "quantization",
+        "prompt_template",
+        "qlora_rank",
+        "qlora_alpha",
+        "qlora_dropout",
+        "qlora_double_quant",
+        "qlora_compute_dtype",
+        "qlora_target_modules",
+    }
+    if set(training) != required or training["method"] != "qlora":
+        raise RuntimeError("Approved training configuration is incomplete")
+    dataset_root = Path(os.environ.get("STRUCTURA_DATASET_ROOT", "/dataset"))
+    return {
+        "base_model": {
+            "id": payload["base_model"]["model_id"],
+            "revision": payload["base_model"]["revision"],
+        },
+        "data": {
+            "train_path": str(dataset_root / "train.jsonl"),
+            "valid_path": str(dataset_root / "valid.jsonl"),
+            "prompt_template": training["prompt_template"],
+            "max_length": training["max_seq_length"],
+        },
+        "training": {
+            "output_dir": str(output_dir),
+            "seed": payload["seed"],
+            "epochs": training["epochs"],
+            "max_steps": training["max_steps"],
+            "learning_rate": training["learning_rate"],
+            "per_device_train_batch_size": training["batch_size"],
+            "per_device_eval_batch_size": training["eval_batch_size"],
+            "gradient_accumulation_steps": training["gradient_accumulation_steps"],
+            "gradient_checkpointing": training["gradient_checkpointing"],
+            "logging_steps": training["logging_steps"],
+            "eval_steps": training["eval_steps"],
+            "save_steps": training["save_steps"],
+            "save_total_limit": training["save_total_limit"],
+        },
+        "qlora": {
+            "quant_type": training["quantization"],
+            "double_quant": training["qlora_double_quant"],
+            "compute_dtype": training["qlora_compute_dtype"],
+            "rank": training["qlora_rank"],
+            "alpha": training["qlora_alpha"],
+            "dropout": training["qlora_dropout"],
+            "target_modules": training["qlora_target_modules"],
+        },
+        "approved_payload": payload,
+    }
+
+
 def dependency_lock_hash(path: Path = ENVIRONMENT_LOCK) -> str:
     if not path.is_file():
         raise RuntimeError("Worker dependency lock is unavailable")
@@ -51,14 +121,22 @@ def dependency_lock_hash(path: Path = ENVIRONMENT_LOCK) -> str:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train Structura QLoRA adapter")
-    parser.add_argument("--config", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--config", type=Path)
+    source.add_argument("--approved-run", type=Path)
+    parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--smoke-steps", type=int, default=None)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    config = load_config(args.config)
+    if args.approved_run:
+        if args.output_dir is None:
+            raise RuntimeError("Approved training requires a fixed output directory")
+        config = load_approved_run(args.approved_run, args.output_dir)
+    else:
+        config = load_config(args.config)
     resolved_dependency_lock_hash = dependency_lock_hash()
     model_ref = config["base_model"]
     data_config = config["data"]
@@ -153,7 +231,11 @@ def main() -> None:
                 "base_model_id": model_ref["id"],
                 "base_model_revision": model_ref["revision"],
                 "dataset_dvc_hash": os.environ["DATASET_DVC_HASH"],
-                "config_hash": canonical_hash(config),
+                "config_hash": (
+                    config["approved_payload"]["config_hash"]
+                    if "approved_payload" in config
+                    else canonical_hash(config)
+                ),
                 "dependency_lock_hash": resolved_dependency_lock_hash,
                 "seed": train_config["seed"],
             }
@@ -167,8 +249,12 @@ def main() -> None:
             "repository_commit": git_sha(),
             "base_model": model_ref,
             "dataset_dvc_hash": os.environ["DATASET_DVC_HASH"],
-            "config": config,
-            "config_hash": canonical_hash(config),
+            "config": config.get("approved_payload", config),
+            "config_hash": (
+                config["approved_payload"]["config_hash"]
+                if "approved_payload" in config
+                else canonical_hash(config)
+            ),
             "dependency_lock_hash": resolved_dependency_lock_hash,
             "seed": train_config["seed"],
             "hardware_snapshot": {
@@ -178,11 +264,14 @@ def main() -> None:
                 "torch_version": torch.__version__,
             },
             "mlflow_run_id": run.info.run_id,
+            "adapter_uri": mlflow.get_artifact_uri("adapter"),
             "metrics": result.metrics,
         }
-        (output_dir / "training-manifest.json").write_text(
+        manifest_path = output_dir / "training-manifest.json"
+        manifest_path.write_text(
             json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
+        mlflow.log_artifact(str(manifest_path), artifact_path="manifests")
 
 
 if __name__ == "__main__":
