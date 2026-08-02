@@ -1,0 +1,55 @@
+schema: '2.0'
+stages:
+  audit-structura:
+    cmd: >-
+      python scripts/structura/audit_dataset.py --fail-on-leakage --output
+      outputs/structura/dataset_audit.json
+    deps:
+    - path: data/structura/processed
+      hash: md5
+      md5: 5168ef806ae2b015efe364df1caa458d.dir
+      size: 3586804
+      nfiles: 4
+    - path: scripts/structura/audit_dataset.py
+      hash: md5
+      md5: 5f63c8bc8c2cc7456535597ffc3e7c2a
+      size: 5365
+    - path: src/structura
+      hash: md5
+      md5: 89c8bcadb34463aa500837d7144d022d.dir
+      size: 64303
+      nfiles: 10
+    outs:
+    - path: outputs/structura/dataset_audit.json
+      hash: md5
+      md5: d89c9f666b7ae2ddf0d1c6145f460650
+      size: 3888
+  rules-baseline:
+    cmd: >-
+      python scripts/structura/evaluate.py --baseline rules --test-path
+      data/structura/processed/test.jsonl --output-predictions
+      outputs/structura/rules-baseline/predictions.jsonl --output-metrics
+      outputs/structura/rules-baseline/metrics.json
+    deps:
+    - path: data/structura/processed/test.jsonl
+      hash: md5
+      md5: e0ab542aa9eeb18cd6b88998e17b8fc7
+      size: 182937
+    - path: scripts/structura/evaluate.py
+      hash: md5
+      md5: 7846e94fb5e83af1e1d79dabf36c3f24
+      size: 11479
+    - path: src/structura
+      hash: md5
+      md5: 89c8bcadb34463aa500837d7144d022d.dir
+      size: 64303
+      nfiles: 10
+    outs:
+    - path: outputs/structura/rules-baseline/metrics.json
+      hash: md5
+      md5: 2cc2d8d1178b1c978761de62fa5cb716
+      size: 10993
+    - path: outputs/structura/rules-baseline/predictions.jsonl
+      hash: md5
+      md5: c0485469f16718539aa1a6d357d24f97
+      size: 224587

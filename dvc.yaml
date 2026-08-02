@@ -1,0 +1,21 @@
+stages:
+  audit-structura:
+    cmd: python scripts/structura/audit_dataset.py --fail-on-leakage --output outputs/structura/dataset_audit.json
+    deps:
+      - data/structura/processed
+      - scripts/structura/audit_dataset.py
+      - src/structura
+    outs:
+      - outputs/structura/dataset_audit.json:
+          cache: false
+  rules-baseline:
+    cmd: python scripts/structura/evaluate.py --baseline rules --test-path data/structura/processed/test.jsonl --output-predictions outputs/structura/rules-baseline/predictions.jsonl --output-metrics outputs/structura/rules-baseline/metrics.json
+    deps:
+      - data/structura/processed/test.jsonl
+      - scripts/structura/evaluate.py
+      - src/structura
+    outs:
+      - outputs/structura/rules-baseline/predictions.jsonl
+    metrics:
+      - outputs/structura/rules-baseline/metrics.json:
+          cache: false
