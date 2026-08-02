@@ -30,3 +30,6 @@ def test_worker_image_records_full_dependency_environment() -> None:
 
     assert "pip freeze --all > /opt/structura-environment.lock" in dockerfile
     assert "COPY data/" not in dockerfile
+    assert "ARG STRUCTURA_GIT_SHA" in dockerfile
+    assert "org.opencontainers.image.revision" in dockerfile
+    assert "ENTRYPOINT [\"python\", \"-m\", \"structura_worker\"]" in dockerfile
