@@ -16,9 +16,9 @@ stages:
       size: 5365
     - path: src/structura
       hash: md5
-      md5: 4d414cc0dae8763cdcc5d2ac7b4e6ee4.dir
-      size: 66580
-      nfiles: 11
+      md5: 3c3b1b74925cacbfc796c3143331165e.dir
+      size: 69495
+      nfiles: 12
     outs:
     - path: outputs/structura/dataset_audit.json
       hash: md5
@@ -41,14 +41,14 @@ stages:
       size: 11479
     - path: src/structura
       hash: md5
-      md5: 4d414cc0dae8763cdcc5d2ac7b4e6ee4.dir
-      size: 66580
-      nfiles: 11
+      md5: 3c3b1b74925cacbfc796c3143331165e.dir
+      size: 69495
+      nfiles: 12
     outs:
     - path: outputs/structura/rules-baseline/metrics.json
       hash: md5
-      md5: 7735eb6d52da067f88958466eb602751
-      size: 13130
+      md5: d4308e487a76f3d61bf73feb43500fbc
+      size: 13086
     - path: outputs/structura/rules-baseline/predictions.jsonl
       hash: md5
       md5: c0485469f16718539aa1a6d357d24f97
