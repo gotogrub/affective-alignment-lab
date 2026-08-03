@@ -78,6 +78,7 @@ class WorkerSettings:
     worker_id: str
     repository: str
     image_git_sha: str
+    image_digest: str
     checkout_root: Path
     dataset_root: Path
     dataset_manifest: Path
@@ -93,12 +94,15 @@ class WorkerSettings:
             "STRUCTURA_REPOSITORY", "gotogrub/affective-alignment-lab"
         )
         image_git_sha = os.environ.get("STRUCTURA_IMAGE_GIT_SHA", "")
+        image_digest = os.environ.get("STRUCTURA_IMAGE_DIGEST", "")
         if not _WORKER_ID_RE.fullmatch(worker_id):
             raise WorkerConfigurationError("Worker identity is invalid")
         if not _REPOSITORY_RE.fullmatch(repository):
             raise WorkerConfigurationError("Worker repository identity is invalid")
         if not re.fullmatch(r"^[0-9a-f]{40}$", image_git_sha):
             raise WorkerConfigurationError("Worker image commit identity is invalid")
+        if not re.fullmatch(r"^sha256:[0-9a-f]{64}$", image_digest):
+            raise WorkerConfigurationError("Worker image digest identity is invalid")
         checkout_root = Path(os.environ.get("STRUCTURA_CHECKOUT_ROOT", "/workspace"))
         dataset_root = Path(os.environ.get("STRUCTURA_DATASET_ROOT", "/dataset"))
         dataset_manifest = Path(
@@ -131,6 +135,7 @@ class WorkerSettings:
             worker_id=worker_id,
             repository=repository,
             image_git_sha=image_git_sha,
+            image_digest=image_digest,
             checkout_root=checkout_root.resolve(),
             dataset_root=dataset_root.resolve(),
             dataset_manifest=dataset_manifest.resolve(),
