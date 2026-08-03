@@ -18,6 +18,14 @@ def prf(predicted: set[str], gold: set[str]) -> dict[str, float]:
     return {"precision": precision, "recall": recall, "f1": f1}
 
 
+def selection_prf(predicted: set[str], gold: set[str]) -> dict[str, float]:
+    """Score per-record set agreement, including an exact empty match."""
+
+    if not predicted and not gold:
+        return {"precision": 1.0, "recall": 1.0, "f1": 1.0}
+    return prf(predicted, gold)
+
+
 def bool_prf(predicted_values: list[bool], gold_values: list[bool]) -> dict[str, float]:
     predicted_positive = {str(index) for index, value in enumerate(predicted_values) if value}
     gold_positive = {str(index) for index, value in enumerate(gold_values) if value}
@@ -81,7 +89,7 @@ def evaluate_prediction_records(records: list[dict[str, Any]], *, include_breakd
                 positive_selection_total += 1
                 if not selected_pred:
                     empty_on_positive_total += 1
-            product_scores = prf(selected_pred, selected_gold)
+            product_scores = selection_prf(selected_pred, selected_gold)
             product_precision_values.append(product_scores["precision"])
             product_recall_values.append(product_scores["recall"])
             product_f1_values.append(product_scores["f1"])
