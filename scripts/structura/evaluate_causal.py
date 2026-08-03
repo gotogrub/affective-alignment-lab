@@ -14,6 +14,7 @@ from lmformatenforcer.integrations.transformers import (
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
+from structura.constrained_decoding import lm_format_enforcer_schema
 from structura.dataset import read_jsonl, write_json, write_jsonl
 from structura.formatting import format_prompt
 from structura.metrics import evaluate_prediction_records
@@ -59,7 +60,9 @@ def main() -> None:
     if args.limit:
         records = records[: args.limit]
     model, tokenizer = load_model(args.model, args.revision, args.adapter)
-    parser = JsonSchemaParser(StructuraOutput.model_json_schema())
+    parser = JsonSchemaParser(
+        lm_format_enforcer_schema(StructuraOutput.model_json_schema())
+    )
     prefix_allowed_tokens_fn = build_transformers_prefix_allowed_tokens_fn(
         tokenizer, parser
     )
