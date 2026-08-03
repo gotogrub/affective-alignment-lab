@@ -133,15 +133,19 @@ def product_score(product: dict[str, Any], category: str | None, constraints: di
         if product.get("category") != category:
             return -100
         score += 3
-    if "price_max" in constraints:
-        if int(product.get("price", 10**12)) > int(constraints["price_max"]):
+    price_max = constraints.get("price_max")
+    if price_max is not None:
+        if int(product.get("price", 10**12)) > int(price_max):
             return -100
         score += 2
-    if "brand" in constraints:
-        if product.get("brand") != constraints["brand"]:
+    brand = constraints.get("brand")
+    if brand is not None:
+        if product.get("brand") != brand:
             return -100
         score += 2
-    requested = set(constraints.get("features", [])) | set(constraints.get("use_case", []))
+    requested = set(constraints.get("features") or []) | set(
+        constraints.get("use_case") or []
+    )
     available = set(product.get("features", [])) | set(product.get("use_cases", []))
     if requested:
         score += len(requested & available)

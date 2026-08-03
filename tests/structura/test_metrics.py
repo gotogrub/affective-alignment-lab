@@ -1,4 +1,20 @@
-from structura.metrics import evaluate_prediction_records
+from structura.metrics import evaluate_prediction_records, selection_prf
+
+
+def test_selection_prf_treats_two_empty_sets_as_exact_match() -> None:
+    assert selection_prf(set(), set()) == {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+    }
+
+
+def test_selection_prf_penalizes_false_positive_against_empty_target() -> None:
+    assert selection_prf({"p0001"}, set()) == {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+    }
 
 
 def test_evaluate_prediction_records_counts_schema_and_grounding() -> None:

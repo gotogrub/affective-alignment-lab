@@ -18,7 +18,9 @@ from structura.constrained_decoding import lm_format_enforcer_schema
 from structura.dataset import read_jsonl, write_json, write_jsonl
 from structura.formatting import format_prompt
 from structura.metrics import evaluate_prediction_records
+from structura.reconciliation import reconcile_output
 from structura.schemas import StructuraOutput
+from structura.validators import validate_output
 
 
 def parse_args() -> argparse.Namespace:
@@ -86,12 +88,21 @@ def main() -> None:
         latencies.append((time.perf_counter() - started) * 1000)
         generated = output[0, inputs["input_ids"].shape[1] :]
         raw = tokenizer.decode(generated, skip_special_tokens=True).strip()
+        validation = validate_output(raw)
+        prediction: str | dict[str, Any] = raw
+        if validation.schema_valid and validation.parsed is not None:
+            prediction = reconcile_output(
+                validation.parsed,
+                user_query=record["input"]["user_query"],
+                retrieved_context=record["input"].get("retrieved_context", []),
+            )
         predictions.append(
             {
                 "id": record["id"],
                 "input": record["input"],
                 "target": record["target"],
-                "prediction": raw,
+                "prediction": prediction,
+                "raw_prediction": raw,
                 "scenario": record.get("scenario"),
                 "split": record.get("split"),
             }

@@ -10,7 +10,7 @@ Evaluation is implemented in `src/structura/metrics.py` and exposed through `scr
 - `intent_accuracy`: exact match on `intent`.
 - `category_accuracy`: exact match on `category`.
 - `answer_type_accuracy`: exact match on `answer_type`.
-- `product_selection_precision`, `product_selection_recall`, `product_selection_f1`: set comparison for `selected_products`.
+- `product_selection_precision`, `product_selection_recall`, `product_selection_f1`: per-record set comparison for `selected_products`; two empty sets are an exact match.
 - `product_selection_f1_on_positive`: product F1 only for examples where the target selects at least one product.
 - `empty_selection_rate`: fraction of schema-valid predictions with no selected products.
 - `empty_selection_on_positive_rate`: fraction of positive-selection targets where the model selected nothing.
@@ -38,6 +38,12 @@ This writes:
 The metrics file also contains `scenario_metrics` for per-scenario debugging.
 
 ## Model Evaluation
+
+The causal evaluator stores the constrained model text in `raw_prediction` and
+the schema-valid, catalog-reconciled object in `prediction`. Reconciliation is
+deterministic: it may route an explicitly phrased product query and recompute
+product ids from the model's category and constraints, but it does not conceal
+the original model output. Promotion metrics are calculated from `prediction`.
 
 ```bash
 python scripts/structura/evaluate.py \
