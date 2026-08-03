@@ -12,6 +12,7 @@ from .config import WorkerConfigurationError, WorkerSettings
 
 
 _SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+_DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
 
 class WorkerIntegrityError(RuntimeError):
@@ -34,9 +35,15 @@ def file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify_checkout(settings: WorkerSettings, repository: str, commit_sha: str) -> None:
+def verify_source_reference(
+    settings: WorkerSettings, repository: str, commit_sha: str
+) -> None:
     if repository != settings.repository or not _SHA_RE.fullmatch(commit_sha):
         raise WorkerIntegrityError("Approved source identity is invalid")
+
+
+def verify_checkout(settings: WorkerSettings, repository: str, commit_sha: str) -> None:
+    verify_source_reference(settings, repository, commit_sha)
     if settings.image_git_sha != commit_sha:
         raise WorkerIntegrityError("Worker image commit differs from approval")
 
@@ -61,7 +68,7 @@ def verify_dataset(settings: WorkerSettings, dataset: dict[str, Any]) -> None:
     dvc_hash = dataset.get("dvc_hash")
     if not all(isinstance(value, str) for value in (repository, commit_sha, dvc_hash)):
         raise WorkerIntegrityError("Canonical dataset identity is incomplete")
-    verify_checkout(settings, repository, commit_sha)
+    verify_source_reference(settings, repository, commit_sha)
     if _dvc_dataset_hash(settings.checkout_root / "dvc.lock") != dvc_hash:
         raise WorkerIntegrityError("Worker dataset differs from canonical DVC hash")
     _verify_dataset_manifest(settings)
@@ -111,6 +118,67 @@ def verify_training(
     if payload.get("status") != expected_status:
         raise WorkerIntegrityError("Training run is not in the claimed state")
     return payload
+
+
+def verify_completed_training(
+    settings: WorkerSettings,
+    training_run: dict[str, Any],
+    dataset: dict[str, Any],
+) -> dict[str, Any]:
+    """Verify immutable training lineage without requiring its historical image."""
+
+    payload = training_run.get("payload")
+    if not isinstance(payload, dict):
+        raise WorkerIntegrityError("Canonical training payload is unavailable")
+    verify_dataset(settings, dataset)
+    verify_source_reference(
+        settings, payload.get("repository", ""), payload.get("commit_sha", "")
+    )
+    if canonical_hash(payload) != training_run.get("payload_hash"):
+        raise WorkerIntegrityError("Completed training payload hash is invalid")
+    if dataset.get("dvc_hash") != payload.get("dataset_dvc_hash"):
+        raise WorkerIntegrityError("Approved training dataset differs from canonical dataset")
+    config = payload.get("training_config")
+    if not isinstance(config, dict) or canonical_hash(config) != payload.get("config_hash"):
+        raise WorkerIntegrityError("Approved training configuration hash is invalid")
+    if payload.get("status") != "completed":
+        raise WorkerIntegrityError("Training run is not completed")
+    for field in (
+        "repository",
+        "commit_sha",
+        "dataset_dvc_hash",
+        "config_hash",
+        "dependency_lock_hash",
+    ):
+        if training_run.get(field) != payload.get(field):
+            raise WorkerIntegrityError("Completed training lineage is inconsistent")
+    return payload
+
+
+def verify_evaluator(settings: WorkerSettings, subject: dict[str, Any]) -> dict[str, Any]:
+    evaluator = subject.get("evaluator")
+    if not isinstance(evaluator, dict):
+        raise WorkerIntegrityError("Canonical evaluator provenance is unavailable")
+    if evaluator.get("protocol_version") != "1.1.0":
+        raise WorkerIntegrityError("Evaluation protocol version is unsupported")
+    verify_checkout(
+        settings,
+        evaluator.get("repository", ""),
+        evaluator.get("commit_sha", ""),
+    )
+    dependency_hash = evaluator.get("dependency_lock_hash")
+    if not isinstance(dependency_hash, str) or file_hash(
+        settings.environment_lock
+    ) != dependency_hash:
+        raise WorkerIntegrityError("Evaluator dependency environment differs from request")
+    image_digest = evaluator.get("image_digest")
+    if (
+        not isinstance(image_digest, str)
+        or not _DIGEST_RE.fullmatch(image_digest)
+        or image_digest != settings.image_digest
+    ):
+        raise WorkerIntegrityError("Evaluator image digest differs from request")
+    return evaluator
 
 
 def safe_run_directory(settings: WorkerSettings, run_id: str) -> Path:

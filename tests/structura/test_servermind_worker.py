@@ -11,7 +11,14 @@ import pytest
 from structura_worker.client import ServerMindClient, WorkerProtocolError
 from structura_worker.config import WorkerSettings
 from structura_worker.execution import failure_payload
-from structura_worker.integrity import WorkerIntegrityError, verify_dataset
+from structura_worker.integrity import (
+    WorkerIntegrityError,
+    canonical_hash,
+    file_hash,
+    verify_completed_training,
+    verify_dataset,
+    verify_evaluator,
+)
 
 
 def _server(handler: type[BaseHTTPRequestHandler]) -> tuple[ThreadingHTTPServer, threading.Thread]:
@@ -102,6 +109,7 @@ stages:
         worker_id="worker-1",
         repository="gotogrub/affective-alignment-lab",
         image_git_sha=commit,
+        image_digest="sha256:" + "b" * 64,
         checkout_root=checkout,
         dataset_root=dataset_root,
         dataset_manifest=manifest,
@@ -164,6 +172,7 @@ stages:
         worker_id="worker-1",
         repository="gotogrub/affective-alignment-lab",
         image_git_sha=commit,
+        image_digest="sha256:" + "b" * 64,
         checkout_root=checkout,
         dataset_root=dataset_root,
         dataset_manifest=manifest,
@@ -189,6 +198,103 @@ def test_worker_failure_payload_never_persists_exception_text() -> None:
     payload = failure_payload(RuntimeError(f"Bearer {credential}"))
     assert credential not in json.dumps(payload)
     assert payload["error_code"] == "WORKER_EXECUTION_FAILED"
+
+
+def test_evaluator_provenance_is_independent_from_completed_training_commit(
+    tmp_path: Path,
+) -> None:
+    checkout = tmp_path / "checkout"
+    dataset_root = tmp_path / "dataset"
+    output = tmp_path / "output"
+    checkout.mkdir()
+    dataset_root.mkdir()
+    output.mkdir()
+    (checkout / "dvc.lock").write_text(
+        """schema: '2.0'
+stages:
+  audit-structura:
+    deps:
+      - path: data/structura/processed
+        md5: dataset-hash.dir
+""",
+        encoding="utf-8",
+    )
+    content = b'{"id":"one"}\n'
+    (dataset_root / "test.jsonl").write_bytes(content)
+    manifest = checkout / "structura-dataset-manifest.sha256"
+    manifest.write_text(
+        f"{hashlib.sha256(content).hexdigest()}  test.jsonl\n", encoding="utf-8"
+    )
+    environment_lock = checkout / "environment.lock"
+    environment_lock.write_text("package==1\n", encoding="utf-8")
+    training_commit = "a" * 40
+    evaluator_commit = "c" * 40
+    image_digest = "sha256:" + "d" * 64
+    settings = WorkerSettings(
+        servermind_origin="http://servermind",
+        servermind_token="secret",
+        mlflow_origin="http://mlflow",
+        worker_id="worker-1",
+        repository="gotogrub/affective-alignment-lab",
+        image_git_sha=evaluator_commit,
+        image_digest=image_digest,
+        checkout_root=checkout,
+        dataset_root=dataset_root,
+        dataset_manifest=manifest,
+        output_root=output,
+        environment_lock=environment_lock,
+        process_timeout_seconds=60,
+        heartbeat_seconds=5,
+    )
+    dataset = {
+        "repository": settings.repository,
+        "commit_sha": training_commit,
+        "dvc_hash": "dataset-hash.dir",
+    }
+    config = {"method": "qlora", "epochs": 1}
+    training_payload = {
+        "repository": settings.repository,
+        "commit_sha": training_commit,
+        "dataset_dvc_hash": "dataset-hash.dir",
+        "training_config": config,
+        "config_hash": canonical_hash(config),
+        "dependency_lock_hash": "e" * 64,
+        "status": "completed",
+        "output_artifacts": {"adapter_uri": "runs:/training/adapter"},
+    }
+    training_run = {
+        **{
+            field: training_payload[field]
+            for field in (
+                "repository",
+                "commit_sha",
+                "dataset_dvc_hash",
+                "config_hash",
+                "dependency_lock_hash",
+            )
+        },
+        "payload": training_payload,
+        "payload_hash": canonical_hash(training_payload),
+    }
+    subject = {
+        "type": "training_run",
+        "model_id": "Qwen/Qwen3-4B",
+        "revision": training_run["payload_hash"],
+        "evaluator": {
+            "protocol_version": "1.1.0",
+            "repository": settings.repository,
+            "commit_sha": evaluator_commit,
+            "dependency_lock_hash": file_hash(environment_lock),
+            "image_digest": image_digest,
+        },
+    }
+
+    verify_evaluator(settings, subject)
+    assert verify_completed_training(settings, training_run, dataset) == training_payload
+
+    subject["evaluator"]["commit_sha"] = training_commit
+    with pytest.raises(WorkerIntegrityError, match="image commit"):
+        verify_evaluator(settings, subject)
 
 
 def test_dataset_manifest_matches_tracked_structura_data() -> None:

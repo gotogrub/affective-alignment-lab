@@ -15,7 +15,9 @@ from .config import WorkerConfigurationError, WorkerSettings
 from .integrity import (
     WorkerIntegrityError,
     safe_run_directory,
+    verify_completed_training,
     verify_dataset,
+    verify_evaluator,
     verify_training,
 )
 
@@ -263,7 +265,6 @@ class StructuraWorker:
         experiment = execution_input.get("experiment")
         if not isinstance(dataset, dict) or not isinstance(experiment, dict):
             raise WorkerProtocolError("Evaluation claim omitted canonical provenance")
-        verify_dataset(self.settings, dataset)
         run_dir = safe_run_directory(self.settings, run_id)
         subject = evaluation_run.get("subject")
         if not isinstance(subject, dict):
@@ -273,15 +274,23 @@ class StructuraWorker:
         if evaluation_run.get("kind") == "training":
             if not isinstance(training_run, dict):
                 raise WorkerProtocolError("Candidate evaluation omitted training lineage")
-            approved = verify_training(
-                self.settings, training_run, dataset, expected_status="completed"
-            )
+            verify_evaluator(self.settings, subject)
+            approved = verify_completed_training(self.settings, training_run, dataset)
+            if (
+                subject.get("revision") != training_run.get("payload_hash")
+                or subject.get("model_id") != training_run.get("base_model_id")
+            ):
+                raise WorkerIntegrityError(
+                    "Evaluation subject differs from completed training lineage"
+                )
             artifacts = approved.get("output_artifacts")
             if not isinstance(artifacts, dict) or not isinstance(
                 artifacts.get("adapter_uri"), str
             ):
                 raise WorkerIntegrityError("Approved adapter reference is unavailable")
             adapter = self._download_artifact(artifacts["adapter_uri"], run_dir / "adapter")
+        else:
+            verify_dataset(self.settings, dataset)
         return self._run_evaluation_process(
             run_id,
             run_dir,
@@ -339,6 +348,13 @@ class StructuraWorker:
                     "subject_model_id": subject["model_id"],
                     "subject_revision": subject["revision"],
                     "evaluation_kind": evaluation_run["kind"],
+                    "evaluator_repository": (
+                        subject.get("evaluator", {}).get("repository")
+                    ),
+                    "evaluator_commit": subject.get("evaluator", {}).get("commit_sha"),
+                    "evaluator_image_digest": (
+                        subject.get("evaluator", {}).get("image_digest")
+                    ),
                 }
             )
             rules_metrics: dict[str, float | int | bool | str | None] = {}
