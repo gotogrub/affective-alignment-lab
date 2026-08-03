@@ -47,7 +47,7 @@ stages:
     outs:
     - path: outputs/structura/rules-baseline/metrics.json
       hash: md5
-      md5: d4308e487a76f3d61bf73feb43500fbc
+      md5: ff45703c908122d55a863f97061f52fd
       size: 13086
     - path: outputs/structura/rules-baseline/predictions.jsonl
       hash: md5
